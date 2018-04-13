@@ -1,1 +1,28 @@
+<!-- Create an index page for all products that displays name and a truncated description, but not inventory. -->
+<%@products.each do |product| %>
+ <!-- <li>< %=product.name%> < %=truncate product.description%></li> -->
+ <li data-description="<%=product.description%>" data-inventory="<%=product.inventory%>" data-li="<%=product.id%>" id="pid-<%=product.id%>"><%=product.name%><button type="button" data-id="<%=product.id%>" onclick='info(<%=product.id%>)'">More Info</button></li>
+<%end %>
+<div id="info"></div>
 
+<script type="text/javascript" charset="utf-8">
+function info(id){
+  console.log("info called");
+  console.log(id);
+  let idtostring=id.toString()
+  <!-- li=document.document.querySelectorAll(`[data-li="${id}"]`) -->
+  <!-- li=document.document.querySelectorAll(`[data-li="${id}"]`) -->
+  <!-- li=document.document.querySelectorAll("[data-li=`${id}`]") -->
+  <!-- li=document.document.getElementById(`${idtostring}`) -->
+  lis=document.getElementById(`pid-${idtostring}`)
+  console.log(idtostring)
+  console.log(lis)
+  description=(lis.getAttribute("data-description"))
+  inventory=(lis.getAttribute("data-inventory"))
+  infodiv =document.querySelector("#info")
+  infodiv.innerHTML += '<br>'
+  infodiv.innerHTML += description
+  infodiv.innerHTML += '<br>'
+  infodiv.innerHTML += inventory
+}
+</script>
