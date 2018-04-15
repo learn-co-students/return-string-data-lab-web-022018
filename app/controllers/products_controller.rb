@@ -15,12 +15,18 @@ class ProductsController < ApplicationController
   def description
     product=Product.find(params[:id])
     if product
-      render plain: product.description
-    else
-      redirect_to :index
+      if product.description
+        render plain: product.description
+      else
+        render plain: "No description"
+      end
     end
-
   end
+  # -  def description
+  # -    product = Product.find(params[:id])
+  # -    render plain: product.description
+  # -  end
+
 
   def inventory
     product=Product.find(params[:id])

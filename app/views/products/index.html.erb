@@ -1,19 +1,34 @@
 <!-- Create an index page for all products that displays name and a truncated description, but not inventory. -->
+<!--  -->
+<!-- <%@products.each do |product| %>
+ <! <li>< %=product.name%> < %=truncate product.description%></li>
+ <li data-description="<%=product.description%>" data-inventory="<%=product.inventory%>"
+    data-li="<%=product.id%>" id="pid-<%=product.id%>"><%=product.name%>
+    <button type="button" data-id="<%=product.id%>" onclick='info(<%=product.id%>)'">More Info</button></li>
+<%end %> -->
+<!--  -->
+<h1>Products</h1>
 <%@products.each do |product| %>
- <!-- <li>< %=product.name%> < %=truncate product.description%></li> -->
- <li data-description="<%=product.description%>" data-inventory="<%=product.inventory%>" data-li="<%=product.id%>" id="pid-<%=product.id%>"><%=product.name%><button type="button" data-id="<%=product.id%>" onclick='info(<%=product.id%>)'">More Info</button></li>
-<%end %>
+  <h3><%=product.name%></h3>
+  <li id="product-<%=product.id%>"><%=truncate product.description%></li>
+  <li id="inventory-<%=product.id%>"><% %></li>
+  <button class="js-more" data-id="<%=product.id%>">More Info</button>
+<%end%>
+
+
+
+
 <div id="info"></div>
 
-<script type="text/javascript" charset="utf-8">
+<!-- <script type="text/javascript" charset="utf-8">
 function info(id){
   console.log("info called");
   console.log(id);
   let idtostring=id.toString()
-  <!-- li=document.document.querySelectorAll(`[data-li="${id}"]`) -->
+  <!li=document.document.querySelectorAll(`[data-li="${id}"]`) -->
   <!-- li=document.document.querySelectorAll(`[data-li="${id}"]`) -->
   <!-- li=document.document.querySelectorAll("[data-li=`${id}`]") -->
-  <!-- li=document.document.getElementById(`${idtostring}`) -->
+  <!-- li=document.document.getElementById(`${idtostring}`)
   lis=document.getElementById(`pid-${idtostring}`)
   console.log(idtostring)
   console.log(lis)
@@ -25,4 +40,63 @@ function info(id){
   infodiv.innerHTML += '<br>'
   infodiv.innerHTML += inventory
 }
+</script> -->
+
+
+
+<script type="text/javascript" charset="utf-8">
+let buttons = document.querySelectorAll('.js-more')
+buttons.forEach(function(button){
+  button.addEventListener("click",function(e){
+    console.log("button clicked")
+    console.log(e)
+    console.log(e.target.attributes["data-id"].nodeValue)
+    let dataid=e.target.attributes["data-id"].nodeValue
+
+    let lidescription = document.querySelector(`#product-${dataid}`)
+    console.log(lidescription);
+
+    fetch(`/products/${dataid}/description`)
+      .then(res=>res.text())
+      .then(json=>changeDescription(json,dataid))
+    fetch(`/products/${dataid}/inventory`)
+ 	    .then(res=>res.text())
+      // .then(text=>console.log(text))
+      .then(text=>changeInventory(text,dataid))
+  })
+})
+function changeDescription(text,id){
+  // console.log("change");
+  let lidescription = document.querySelector(`#product-${id}`)
+  lidescription.innerText=text
+  lidescription.innerText=text
+}
+function changeInventory(text,id){
+  let liinventory = document.querySelector(`#inventory-${id}`)
+  // let parent = lidescription.parent()
+  // let parent = lidescription.parentNode
+  // let amounthtml = document.createElement('li')
+  let amount = "not set"
+  if(text == "true"){amount = "Available"}
+  if(text == "false"){amount = "Sold Out"}
+  // amounthtml.innerText = text
+  // amounthtml.innerText = amount
+  // parent.appendChild(amounthtml)
+  liinventory.innerText = amount
+}
+// -$(function() {
+// -  $(".js-more").on("click", function() {
+// -    let id = $(this).data("id");
+// -    $.get("/products/" + id + "/description", function(description) {
+// -      $.get("/products/" + id + "/inventory", function(inventory) {
+// -        var inventoryText = "<strong>Available</strong>";
+// -        if(inventory === "false"){
+// -          inventoryText = "<strong>Sold Out</strong>";
+// -        }
+// -        var descriptionText = "<p>" + description + "</p><p>" + inventoryText + "</p>";
+// -        $("#product-" + id).html(descriptionText);
+// -      });
+// -    });
+// -  });
+// -});
 </script>
